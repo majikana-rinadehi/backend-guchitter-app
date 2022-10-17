@@ -8,6 +8,7 @@ import (
 type ComplaintUseCase interface {
 	FindAll() ([]*model.Complaint, error)
 	FindByAvatarId(id string) (*model.Complaint, error)
+	Create(complaint model.Complaint) (*model.Complaint, error)
 }
 
 type complaintUseCase struct {
@@ -28,4 +29,9 @@ func (cu complaintUseCase) FindAll() ([]*model.Complaint, error) {
 func (cu complaintUseCase) FindByAvatarId(id string) (*model.Complaint, error) {
 	complaint, err := cu.complaintRepository.FindByAvatarId(id)
 	return complaint, err
+}
+
+func (cu complaintUseCase) Create(complaint model.Complaint) (*model.Complaint, error) {
+	result, err := cu.complaintRepository.Create(complaint)
+	return result, err
 }

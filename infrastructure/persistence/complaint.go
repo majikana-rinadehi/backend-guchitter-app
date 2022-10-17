@@ -33,3 +33,8 @@ func (cp *complaintPersistence) FindByAvatarId(id string) (*model.Complaint, err
 	}
 	return complaint, nil
 }
+
+func (cp *complaintPersistence) Create(complaint model.Complaint) (*model.Complaint, error) {
+	complaintList = append(complaintList, &complaint)
+	return &complaint, nil
+}

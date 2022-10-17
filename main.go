@@ -17,6 +17,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/complaints", complaintHandler.Index)
 	router.GET("/complaints/:id", complaintHandler.Search)
+	router.POST("/complaints", complaintHandler.Create)
 
 	fmt.Println("sa-bakidou")
 	router.Run("localhost:8080")

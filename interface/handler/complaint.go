@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"example.com/main/domain/model"
 	"example.com/main/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,7 @@ import (
 type ComplaintHandler interface {
 	Index(c *gin.Context)
 	Search(c *gin.Context)
+	Create(c *gin.Context)
 }
 
 type complaintHandler struct {
@@ -37,4 +39,19 @@ func (ch complaintHandler) Search(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 	}
 	c.IndentedJSON(http.StatusOK, complaint)
+}
+
+func (ch complaintHandler) Create(c *gin.Context) {
+	var newComplaint *model.Complaint
+
+	// Call BindJSON to bind the received JSON to
+	// newAlbum.
+	if err := c.BindJSON(&newComplaint); err != nil {
+		return
+	}
+	result, err := ch.complaintUseCase.Create(*newComplaint)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+	}
+	c.IndentedJSON(http.StatusOK, result)
 }

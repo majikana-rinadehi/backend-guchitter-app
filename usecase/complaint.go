@@ -7,7 +7,7 @@ import (
 
 type ComplaintUseCase interface {
 	FindAll() ([]*model.Complaint, error)
-	FindByAvatarId(id string) (*model.Complaint, error)
+	FindByAvatarId(id int) (*model.Complaint, error)
 	Create(complaint model.Complaint) (*model.Complaint, error)
 }
 
@@ -26,7 +26,7 @@ func (cu complaintUseCase) FindAll() ([]*model.Complaint, error) {
 	return complaintList, err
 }
 
-func (cu complaintUseCase) FindByAvatarId(id string) (*model.Complaint, error) {
+func (cu complaintUseCase) FindByAvatarId(id int) (*model.Complaint, error) {
 	complaint, err := cu.complaintRepository.FindByAvatarId(id)
 	return complaint, err
 }

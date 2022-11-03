@@ -2,6 +2,6 @@ package model
 
 // ぐち
 type Complaint struct {
-	ComplaintText string
-	AvatarId      string
+	ComplaintText string `json:"complaintText" example:"勘弁してくれ!"`
+	AvatarId      string `json:"avatarId" example:"1"`
 }

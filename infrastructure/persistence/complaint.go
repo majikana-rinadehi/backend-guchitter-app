@@ -1,40 +1,53 @@
 package persistence
 
 import (
+	"errors"
+
 	"example.com/main/domain/model"
 	"example.com/main/domain/repository"
+	"gorm.io/gorm"
 )
 
 type complaintPersistence struct {
+	Conn *gorm.DB
 }
 
-var complaintList = []*model.Complaint{
-	{ComplaintText: "textA", AvatarId: "avatarA"},
-	{ComplaintText: "textB", AvatarId: "avatarB"},
-	{ComplaintText: "textC", AvatarId: "avatarC"},
+func NewComplaintPersistence(conn *gorm.DB) repository.ComplaintRepository {
+	return &complaintPersistence{
+		Conn: conn,
+	}
 }
 
-func NewComplaintPersistence() repository.ComplaintRepository {
-	return &complaintPersistence{}
-}
+func (cp *complaintPersistence) FindAll() (complaintList []*model.Complaint, err error) {
+	db := cp.Conn
 
-func (cp *complaintPersistence) FindAll() ([]*model.Complaint, error) {
+	if err := db.Find(&complaintList).Error; err != nil {
+		return nil, err
+	}
 
 	return complaintList, nil
 }
 
-func (cp *complaintPersistence) FindByAvatarId(id string) (*model.Complaint, error) {
-	var complaint *model.Complaint
+func (cp *complaintPersistence) FindByAvatarId(id int) (complaint *model.Complaint, err error) {
+	db := cp.Conn
 
-	for _, v := range complaintList {
-		if v.AvatarId == id {
-			complaint = v
-		}
+	// Typeormみたくカラム名をキャメルケース(avatarId)にするとエラー
+	err = db.First(&complaint, "avatar_id = ?", id).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		complaint = nil
+	} else if err != nil {
+		return nil, err
 	}
+
 	return complaint, nil
 }
 
 func (cp *complaintPersistence) Create(complaint model.Complaint) (*model.Complaint, error) {
-	complaintList = append(complaintList, &complaint)
+	db := cp.Conn
+
+	if result := db.Create(&complaint); result.Error != nil {
+		return nil, result.Error
+	}
+
 	return &complaint, nil
 }

@@ -1,0 +1,120 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "はじめてのswagger",
+        "title": "gin-swagger guchitter",
+        "contact": {},
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/complaints": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Complaints"
+                ],
+                "summary": "Complaintsを全件取得",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Complaint"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Complaints"
+                ],
+                "summary": "Complaintを一件登録する",
+                "parameters": [
+                    {
+                        "description": "Complaint",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Complaint"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "登録したComplaint",
+                        "schema": {
+                            "$ref": "#/definitions/model.Complaint"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/complaints/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Complaints"
+                ],
+                "summary": "avatarIdで検索したComplaintを1件返す",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "アバターID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Complaint"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Complaint": {
+            "type": "object",
+            "properties": {
+                "avatarId": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "complaintText": {
+                    "type": "string",
+                    "example": "勘弁してくれ!"
+                }
+            }
+        }
+    }
+}

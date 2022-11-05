@@ -6,6 +6,7 @@ import (
 	"example.com/main/infrastructure/persistence"
 	"example.com/main/interface/handler"
 	"example.com/main/usecase"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -21,6 +22,12 @@ func main() {
 	complaintHandler := handler.NewComplaintHandler(complaintUseCase)
 
 	router := gin.Default()
+
+	// CORS設定
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	router.Use(cors.New(config))
+
 	router.GET("/complaints", complaintHandler.Index)
 	router.GET("/complaints/:id", complaintHandler.Search)
 	router.POST("/complaints", complaintHandler.Create)

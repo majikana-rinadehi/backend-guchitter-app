@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"example.com/main/domain/model"
+	"example.com/main/logging"
 	"example.com/main/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -37,6 +38,7 @@ func NewComplaintHandler(cu usecase.ComplaintUseCase) ComplaintHandler {
 // @Failure 500
 // @Router /complaints [get]
 func (ch complaintHandler) Index(c *gin.Context) {
+	logging.Log.Info("Index")
 	complaints, err := ch.complaintUseCase.FindAll()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})

@@ -5,11 +5,19 @@ import (
 	_ "example.com/main/docs"
 	"example.com/main/infrastructure/persistence"
 	"example.com/main/interface/handler"
+	logging "example.com/main/logging"
 	"example.com/main/usecase"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+const (
+	// header name of unique request id
+	XRequestId = "X-Request-ID"
 )
 
 // @title gin-swagger guchitter
@@ -17,11 +25,18 @@ import (
 // @lisence.name rudy
 // @description はじめてのswagger
 func main() {
+	// 依存性の注入
 	complaintPersistence := persistence.NewComplaintPersistence(config.Connect())
 	complaintUseCase := usecase.NewComplaintUseCase(complaintPersistence)
 	complaintHandler := handler.NewComplaintHandler(complaintUseCase)
 
 	router := gin.Default()
+
+	// リクエストID設定
+	router.Use(requestid.New())
+
+	// ロギング設定
+	router.Use(loggerSetup())
 
 	// CORS設定
 	config := cors.DefaultConfig()
@@ -36,4 +51,14 @@ func main() {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.Run("localhost:8080")
+}
+
+// Logger設定を行うミドルウェア
+func loggerSetup() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// logging設定
+		requestId := c.Request.Header.Get(XRequestId)
+		logging.SetupLogger(requestId)
+		c.Next()
+	}
 }

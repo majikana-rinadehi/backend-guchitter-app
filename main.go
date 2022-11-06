@@ -39,9 +39,9 @@ func main() {
 	router.Use(loggerSetup())
 
 	// CORS設定
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
-	router.Use(cors.New(config))
+	corsConf := cors.DefaultConfig()
+	corsConf.AllowOrigins = []string{"http://localhost:3000"}
+	router.Use(cors.New(corsConf))
 
 	router.GET("/complaints", complaintHandler.Index)
 	router.GET("/complaints/:id", complaintHandler.Search)

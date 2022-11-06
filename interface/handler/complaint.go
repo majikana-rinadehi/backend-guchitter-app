@@ -8,6 +8,7 @@ import (
 	"example.com/main/domain/model"
 	"example.com/main/logging"
 	"example.com/main/usecase"
+	"github.com/bloom42/rz-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,6 +42,7 @@ func (ch complaintHandler) Index(c *gin.Context) {
 	logging.Log.Info("Index")
 	complaints, err := ch.complaintUseCase.FindAll()
 	if err != nil {
+		logging.Log.Error("Failed at FindAll()", rz.Err(err))
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 	}
 	c.IndentedJSON(http.StatusOK, complaints)

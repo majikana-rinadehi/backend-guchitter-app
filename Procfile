@@ -1,2 +1,2 @@
 web: bin/backend-guchitter-app
-release: bin/migration up
+release: bin/db up

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"example.com/main/config"
 	_ "example.com/main/docs"
 	"example.com/main/infrastructure/persistence"
@@ -50,7 +52,8 @@ func main() {
 	// http://localhost:8080/swagger/index.html にswagger UI を表示する
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	router.Run("localhost:8080")
+	port := os.Getenv("PORT")
+	router.Run(":" + port)
 }
 
 // Logger設定を行うミドルウェア

@@ -10,22 +10,8 @@ import (
 )
 
 func Connect() *gorm.DB {
-	env := os.Getenv("GUCHITTER_ENV")
 
-	if env == "production" {
-		env = "production"
-	} else {
-		env = "development"
-	}
-
-	godotenv.Load(".env." + env)
-
-	USER := os.Getenv("guchitter_USER")
-	PASS := os.Getenv("guchitter_PASS")
-	DBNAME := os.Getenv("guchitter_DBNAME")
-	HOST := os.Getenv("guchitter_HOST")
-	PORT := os.Getenv("guchitter_PORT")
-	CONNECT := USER + ":" + PASS + "@tcp(" + HOST + ":" + PORT + ")/" + DBNAME + "?charset=utf8mb4&parseTime=True&loc=Local"
+	CONNECT := GetDsn()
 
 	db, err := gorm.Open(mysql.Open(CONNECT), &gorm.Config{
 		// level infoに設定することでSQLがログ出力される
@@ -38,4 +24,28 @@ func Connect() *gorm.DB {
 
 	return db
 
+}
+
+func GetDsn() string {
+	env := os.Getenv("GUCHITTER_ENV")
+
+	if env == "production" {
+		env = "production"
+	} else {
+		env = "development"
+	}
+
+	godotenv.Load(".env." + env)
+
+	DBUSER := os.Getenv("guchitter_USER")
+	DBPASS := os.Getenv("guchitter_PASS")
+	DBNAME := os.Getenv("guchitter_DBNAME")
+	HOST := os.Getenv("guchitter_HOST")
+	DBPORT := os.Getenv("guchitter_PORT")
+
+	// golang-migrate での migrate 実行時に、下記が設定されていないとエラーになる
+	// multiStatements=true
+	CONNECT := DBUSER + ":" + DBPASS + "@tcp(" + HOST + ":" + DBPORT + ")/" + DBNAME + "?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"
+
+	return CONNECT
 }

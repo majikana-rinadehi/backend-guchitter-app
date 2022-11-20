@@ -1,0 +1,4 @@
+DROP SCHEMA IF EXISTS guchitter;
+
+DROP TABLE IF EXISTS `avatar`;
+DROP TABLE IF EXISTS `complaints`;

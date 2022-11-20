@@ -42,8 +42,21 @@ func hoge() {
 }
 ```
 
+### Migration
+- 1.Migrationファイルの作成
+```sh
+make create-migration
+```
+- 2.作成されたMigrationにSQLを記載
+- 3.Up
+```sh
+make migrateup
+```
+  - ※初回はエラーが出るので二度実施する(一度目でMigrate自体は実施されるだが、schema_migration の関係でエラーが出る。二度目はMigrateが実施されないが、エラーが出ない(dirty が解消される))
+
 ## 環境
 - 設定ファイルは下記。`GUCHITTER_ENV`の値に応じて読み込まれる。
   - 本番:`.env.production`
   - 開発:`.env.development`
+
 

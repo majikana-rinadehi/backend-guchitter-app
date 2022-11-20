@@ -5,9 +5,9 @@ import (
 
 	"strconv"
 
-	"example.com/main/domain/model"
-	"example.com/main/logging"
-	"example.com/main/usecase"
+	"github.com/backend-guchitter-app/domain/model"
+	"github.com/backend-guchitter-app/logging"
+	"github.com/backend-guchitter-app/usecase"
 	"github.com/bloom42/rz-go"
 	"github.com/gin-gonic/gin"
 )

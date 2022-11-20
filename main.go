@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 
-	"example.com/main/config"
-	_ "example.com/main/docs"
-	"example.com/main/infrastructure/persistence"
-	"example.com/main/interface/handler"
-	logging "example.com/main/logging"
-	"example.com/main/usecase"
+	"github.com/backend-guchitter-app/config"
+	_ "github.com/backend-guchitter-app/docs"
+	"github.com/backend-guchitter-app/infrastructure/persistence"
+	"github.com/backend-guchitter-app/interface/handler"
+	logging "github.com/backend-guchitter-app/logging"
+	"github.com/backend-guchitter-app/usecase"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"

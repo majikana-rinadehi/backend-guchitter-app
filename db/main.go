@@ -8,7 +8,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
 
-	"example.com/main/config"
+	// "github.com/backend-guchitter-app/config"
+	"github.com/backend-guchitter-app/config"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"

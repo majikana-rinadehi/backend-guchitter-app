@@ -29,7 +29,7 @@ import (
 - 例:
 ```go
 import (
-  "example.com/main/logging"
+  "github.com/backend-guchitter-app/logging"
   "github.com/bloom42/rz-go"
 )
 ...

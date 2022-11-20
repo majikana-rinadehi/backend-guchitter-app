@@ -1,4 +1,4 @@
-module example.com/main
+module github.com/backend-guchitter-app
 
 go 1.19
 

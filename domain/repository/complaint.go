@@ -1,6 +1,6 @@
 package repository
 
-import "example.com/main/domain/model"
+import "github.com/backend-guchitter-app/domain/model"
 
 type ComplaintRepository interface {
 	FindAll() ([]*model.Complaint, error)

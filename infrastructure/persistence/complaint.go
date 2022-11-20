@@ -3,8 +3,8 @@ package persistence
 import (
 	"errors"
 
-	"example.com/main/domain/model"
-	"example.com/main/domain/repository"
+	"github.com/backend-guchitter-app/domain/model"
+	"github.com/backend-guchitter-app/domain/repository"
 	"gorm.io/gorm"
 )
 

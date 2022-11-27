@@ -12,6 +12,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -42,7 +43,17 @@ func main() {
 
 	// CORS設定
 	corsConf := cors.DefaultConfig()
-	corsConf.AllowOrigins = []string{"http://localhost:3000"}
+	env := os.Getenv("GUCHITTER_ENV")
+
+	if env == "production" {
+		env = "production"
+	} else {
+		env = "development"
+	}
+
+	godotenv.Load(".env." + env)
+	FRONT_ORIGIN := os.Getenv("guchitter_FRONT_ORIGIN")
+	corsConf.AllowOrigins = []string{FRONT_ORIGIN}
 	router.Use(cors.New(corsConf))
 
 	router.GET("/complaints", complaintHandler.Index)

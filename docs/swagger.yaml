@@ -74,4 +74,31 @@ paths:
       summary: avatarIdで検索したComplaintを1件返す
       tags:
       - Complaints
+  /complaints/between-time:
+    get:
+      parameters:
+      - description: "2022-11-27 0:00:00"
+        in: query
+        name: from
+        type: string
+      - description: "2022-11-28 0:00:00"
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Complaint'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: 更新日時がfrom, toの間のComplaintを返す
+      tags:
+      - Complaints
 swagger: "2.0"

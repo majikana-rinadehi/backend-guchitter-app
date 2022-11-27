@@ -51,3 +51,21 @@ func (cp *complaintPersistence) Create(complaint model.Complaint) (*model.Compla
 
 	return &complaint, nil
 }
+
+func (cp *complaintPersistence) FindBetweenTimestamp(from, to string) (complaintList []*model.Complaint, err error) {
+	db := cp.Conn
+
+	chain := db.Where("")
+	if from != "" {
+		chain.Where("last_update >= ?", from)
+	}
+	if to != "" {
+		chain.Where("last_update <= ?", to)
+	}
+
+	if err := chain.Find(&complaintList).Error; err != nil {
+		return nil, err
+	}
+
+	return complaintList, nil
+}

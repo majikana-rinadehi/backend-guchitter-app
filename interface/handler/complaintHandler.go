@@ -17,6 +17,7 @@ type ComplaintHandler interface {
 	Index(c *gin.Context)
 	Search(c *gin.Context)
 	Create(c *gin.Context)
+	FindBetweenTimestamp(c *gin.Context)
 }
 
 type complaintHandler struct {
@@ -39,7 +40,6 @@ func NewComplaintHandler(cu usecase.ComplaintUseCase) ComplaintHandler {
 // @Failure 500
 // @Router /complaints [get]
 func (ch complaintHandler) Index(c *gin.Context) {
-	logging.Log.Info("Index")
 	complaints, err := ch.complaintUseCase.FindAll()
 	if err != nil {
 		logging.Log.Error("Failed at FindAll()", rz.Err(err))
@@ -91,4 +91,27 @@ func (ch complaintHandler) Create(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 	}
 	c.IndentedJSON(http.StatusOK, result)
+}
+
+// FindBetweenTimestamp
+// @Summary 更新日時がfrom, toの間のComplaintを返す
+// @Tags Complaints
+// @Produce json
+// @Param from query string false "2022-11-27 0:00:00"
+// @Param to query string false "2022-11-28 0:00:00"
+// @Success 200 {array} model.Complaint
+// @Failure 400
+// @Failure 500
+// @Router /complaints/between-time [get]
+func (ch complaintHandler) FindBetweenTimestamp(c *gin.Context) {
+	from := c.Query("from")
+	to := c.Query("to")
+	complaintList, err := ch.complaintUseCase.FindBetweenTimestamp(from, to)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+	}
+	if len(complaintList) == 0 {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+	}
+	c.IndentedJSON(http.StatusOK, complaintList)
 }

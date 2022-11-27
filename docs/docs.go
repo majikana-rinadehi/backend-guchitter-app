@@ -77,6 +77,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/complaints/between-time": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Complaints"
+                ],
+                "summary": "更新日時がfrom, toの間のComplaintを返す",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "2022-11-27 0:00:00",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "2022-11-28 0:00:00",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Complaint"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/complaints/{id}": {
             "get": {
                 "produces": [

@@ -18,6 +18,7 @@ type ComplaintHandler interface {
 	Search(c *gin.Context)
 	Create(c *gin.Context)
 	FindBetweenTimestamp(c *gin.Context)
+	DeleteByComplaintId(c *gin.Context)
 }
 
 type complaintHandler struct {
@@ -114,4 +115,22 @@ func (ch complaintHandler) FindBetweenTimestamp(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
 	}
 	c.IndentedJSON(http.StatusOK, complaintList)
+}
+
+// DeleteByComplaintId
+// @Summary complaintIdで指定したComplaintを1件削除する
+// @Tags Complaints
+// @Produce json
+// @Param id path string false "愚痴ID"
+// @Success 204
+// @Failure 400
+// @Failure 500
+// @Router /complaints/{id} [delete]
+func (ch complaintHandler) DeleteByComplaintId(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	err := ch.complaintUseCase.DeleteByComplaintId(id)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+	}
+	c.Status(http.StatusNoContent)
 }

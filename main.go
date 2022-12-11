@@ -61,6 +61,7 @@ func main() {
 	router.POST("/complaints", complaintHandler.Create)
 	// TODO refactor endopoint
 	router.GET("/complaints/between-time", complaintHandler.FindBetweenTimestamp)
+	router.DELETE("/complaints/:id", complaintHandler.DeleteByComplaintId)
 
 	// http://localhost:8080/swagger/index.html にswagger UI を表示する
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

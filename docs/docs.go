@@ -150,6 +150,34 @@ const docTemplate = `{
                         "description": "Internal Server Error"
                     }
                 }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Complaints"
+                ],
+                "summary": "complaintIdで指定したComplaintを1件削除する",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "愚痴ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
             }
         }
     },
@@ -160,6 +188,9 @@ const docTemplate = `{
                 "avatarId": {
                     "type": "string",
                     "example": "1"
+                },
+                "complaintId": {
+                    "type": "integer"
                 },
                 "complaintText": {
                     "type": "string",

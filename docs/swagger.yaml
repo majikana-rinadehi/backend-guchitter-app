@@ -4,6 +4,8 @@ definitions:
       avatarId:
         example: "1"
         type: string
+      complaintId:
+        type: integer
       complaintText:
         example: 勘弁してくれ!
         type: string
@@ -54,6 +56,24 @@ paths:
       tags:
       - Complaints
   /complaints/{id}:
+    delete:
+      parameters:
+      - description: 愚痴ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: complaintIdで指定したComplaintを1件削除する
+      tags:
+      - Complaints
     get:
       parameters:
       - description: アバターID

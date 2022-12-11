@@ -7,4 +7,5 @@ type ComplaintRepository interface {
 	FindByAvatarId(id int) (*model.Complaint, error)
 	Create(complaint model.Complaint) (*model.Complaint, error)
 	FindBetweenTimestamp(from string, to string) ([]*model.Complaint, error)
+	DeleteByComplaintId(id int) error
 }

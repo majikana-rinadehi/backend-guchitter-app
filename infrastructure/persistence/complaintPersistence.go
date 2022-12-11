@@ -6,6 +6,7 @@ import (
 	"github.com/backend-guchitter-app/domain/model"
 	"github.com/backend-guchitter-app/domain/repository"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type complaintPersistence struct {
@@ -68,4 +69,17 @@ func (cp *complaintPersistence) FindBetweenTimestamp(from, to string) (complaint
 	}
 
 	return complaintList, nil
+}
+
+func (cp *complaintPersistence) DeleteByComplaintId(id int) error {
+	db := cp.Conn
+
+	if err := db.
+		Clauses(clause.Returning{}).
+		Where("complaint_id = ?", id).
+		Delete(&model.Complaint{}).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

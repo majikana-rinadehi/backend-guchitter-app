@@ -10,6 +10,7 @@ type ComplaintUseCase interface {
 	FindByAvatarId(id int) (*model.Complaint, error)
 	Create(complaint model.Complaint) (*model.Complaint, error)
 	FindBetweenTimestamp(from string, to string) ([]*model.Complaint, error)
+	DeleteByComplaintId(id int) error
 }
 
 type complaintUseCase struct {
@@ -40,4 +41,9 @@ func (cu complaintUseCase) Create(complaint model.Complaint) (*model.Complaint, 
 func (cu complaintUseCase) FindBetweenTimestamp(from string, to string) ([]*model.Complaint, error) {
 	complaintList, err := cu.complaintRepository.FindBetweenTimestamp(from, to)
 	return complaintList, err
+}
+
+func (cu complaintUseCase) DeleteByComplaintId(id int) error {
+	err := cu.complaintRepository.DeleteByComplaintId(id)
+	return err
 }

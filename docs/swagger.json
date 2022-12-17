@@ -181,7 +181,9 @@
                     "example": "1"
                 },
                 "complaintId": {
-                    "type": "integer"
+                    "description": "ID, CreatedAt, UpdatedAt, DeletedAt が付与される\n=\u003e Error 1054: Unknown column 'created_at' in 'field list'のエラー\ngorm.Model\nタグ`gorm:\"primaryKey\"`を付与。goの構造体は、複数のタグがある場合は半角スペースで区切って記載",
+                    "type": "integer",
+                    "example": 56
                 },
                 "complaintText": {
                     "type": "string",

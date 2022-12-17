@@ -5,6 +5,12 @@ definitions:
         example: "1"
         type: string
       complaintId:
+        description: |-
+          ID, CreatedAt, UpdatedAt, DeletedAt が付与される
+          => Error 1054: Unknown column 'created_at' in 'field list'のエラー
+          gorm.Model
+          タグ`gorm:"primaryKey"`を付与。goの構造体は、複数のタグがある場合は半角スペースで区切って記載
+        example: 56
         type: integer
       complaintText:
         example: 勘弁してくれ!

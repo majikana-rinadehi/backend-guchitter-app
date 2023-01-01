@@ -48,6 +48,8 @@ func hoge() {
 make create-migration
 ```
 - 2.作成されたMigrationにSQLを記載
+  - ⚠Gormの規約で、モデル名を複数形にしたテーブル名にしなければいけない⚠
+  - 例：モデル名:`User` => テーブル名は`users`
 - 3.Up
 ```sh
 make migrateup

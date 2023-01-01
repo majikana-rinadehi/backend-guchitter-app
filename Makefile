@@ -1,5 +1,8 @@
 MIGRATION_DIR=./db/migrations
 
+run:
+	swag init && go mod tidy && go mod vendor && go run .
+
 create-migration:
 	migrate create -ext sql -dir $(MIGRATION_DIR) -seq create_schema
 

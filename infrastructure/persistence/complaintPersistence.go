@@ -5,6 +5,8 @@ import (
 
 	"github.com/backend-guchitter-app/domain/model"
 	"github.com/backend-guchitter-app/domain/repository"
+	"github.com/backend-guchitter-app/logging"
+	"github.com/bloom42/rz-go"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -46,9 +48,13 @@ func (cp *complaintPersistence) FindByAvatarId(id int) (complaint *model.Complai
 func (cp *complaintPersistence) Create(complaint model.Complaint) (*model.Complaint, error) {
 	db := cp.Conn
 
-	if result := db.Create(&complaint); result.Error != nil {
+	result := db.Create(&complaint)
+
+	if result.Error != nil {
 		return nil, result.Error
 	}
+
+	logging.Log.Debug("complaint", rz.Any("complaint", complaint))
 
 	return &complaint, nil
 }

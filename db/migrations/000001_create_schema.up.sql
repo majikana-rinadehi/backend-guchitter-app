@@ -1,5 +1,5 @@
 CREATE TABLE `avatar` (
-  `avatar_id` smallint unsigned NOT NULL,
+  `avatar_id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `avatar_name` varchar(45) NOT NULL,
   PRIMARY KEY (`avatar_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

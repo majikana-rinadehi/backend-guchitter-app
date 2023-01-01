@@ -33,6 +33,10 @@ func main() {
 	complaintUseCase := usecase.NewComplaintUseCase(complaintPersistence)
 	complaintHandler := handler.NewComplaintHandler(complaintUseCase)
 
+	avatarPersistence := persistence.NewAvatarPersistence(config.Connect())
+	avatarUseCase := usecase.NewAvatarUseCase(avatarPersistence)
+	avatarHandler := handler.NewAvatarHandler(avatarUseCase)
+
 	router := gin.Default()
 
 	// リクエストID設定
@@ -56,12 +60,22 @@ func main() {
 	corsConf.AllowOrigins = []string{FRONT_ORIGIN}
 	router.Use(cors.New(corsConf))
 
+	// エンドポイントの設定
+	// Complaints
 	router.GET("/complaints", complaintHandler.Index)
 	router.GET("/complaints/:id", complaintHandler.Search)
 	router.POST("/complaints", complaintHandler.Create)
 	// TODO refactor endopoint
 	router.GET("/complaints/between-time", complaintHandler.FindBetweenTimestamp)
 	router.DELETE("/complaints/:id", complaintHandler.DeleteByComplaintId)
+
+	// Avatars
+	router.GET("/avatars", avatarHandler.Index)
+	router.GET("/avatars/:id", avatarHandler.Search)
+	router.POST("/avatars", avatarHandler.Create)
+	// TODO refactor endopoint
+	router.GET("/avatars/between-time", avatarHandler.FindBetweenTimestamp)
+	router.DELETE("/avatars/:id", avatarHandler.DeleteByAvatarId)
 
 	// http://localhost:8080/swagger/index.html にswagger UI を表示する
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

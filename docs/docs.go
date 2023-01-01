@@ -16,6 +16,170 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/avatars": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avatars"
+                ],
+                "summary": "Avatarsを全件取得",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Avatar"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avatars"
+                ],
+                "summary": "Avatarを一件登録する",
+                "parameters": [
+                    {
+                        "description": "Avatar",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Avatar"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "登録したAvatar",
+                        "schema": {
+                            "$ref": "#/definitions/model.Avatar"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/avatars/between-time": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avatars"
+                ],
+                "summary": "更新日時がfrom, toの間のAvatarを返す",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "2022-11-27 0:00:00",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "2022-11-28 0:00:00",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Avatar"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/avatars/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avatars"
+                ],
+                "summary": "avatarIdで検索したAvatarを1件返す",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "アバターID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Avatar"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avatars"
+                ],
+                "summary": "avatarIdで指定したAvatarを1件削除する",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "アバターID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/complaints": {
             "get": {
                 "produces": [
@@ -182,6 +346,27 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "model.Avatar": {
+            "type": "object",
+            "properties": {
+                "avatarId": {
+                    "type": "integer",
+                    "example": 1234567890
+                },
+                "avatarName": {
+                    "type": "string",
+                    "example": "Nino"
+                },
+                "avatarText": {
+                    "type": "string",
+                    "example": "なのよ"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "example": "https://hoge.com/fuga"
+                }
+            }
+        },
         "model.Complaint": {
             "type": "object",
             "properties": {

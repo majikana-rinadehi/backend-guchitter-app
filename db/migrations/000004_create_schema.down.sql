@@ -1,0 +1,1 @@
+RENAME TABLE `avatars` to `avatar`

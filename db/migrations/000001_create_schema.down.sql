@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS `avatar`;
+DROP TABLE IF EXISTS `complaints`;

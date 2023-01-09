@@ -40,6 +40,111 @@ info:
   title: gin-swagger guchitter
   version: 0.0.1
 paths:
+  /avatars:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Avatar'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Avatarsを全件取得
+      tags:
+      - Avatars
+    post:
+      parameters:
+      - description: Avatar
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/model.Avatar'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登録したAvatar
+          schema:
+            $ref: '#/definitions/model.Avatar'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Avatarを一件登録する
+      tags:
+      - Avatars
+  /avatars/{id}:
+    delete:
+      parameters:
+      - description: アバターID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: avatarIdで指定したAvatarを1件削除する
+      tags:
+      - Avatars
+    get:
+      parameters:
+      - description: アバターID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Avatar'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: avatarIdで検索したAvatarを1件返す
+      tags:
+      - Avatars
+  /avatars/between-time:
+    get:
+      parameters:
+      - description: "2022-11-27 0:00:00"
+        in: query
+        name: from
+        type: string
+      - description: "2022-11-28 0:00:00"
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Avatar'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: 更新日時がfrom, toの間のAvatarを返す
+      tags:
+      - Avatars
   /complaints:
     get:
       produces:
@@ -80,6 +185,24 @@ paths:
       tags:
       - Complaints
   /complaints/{id}:
+    delete:
+      parameters:
+      - description: 愚痴ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: complaintIdで指定したComplaintを1件削除する
+      tags:
+      - Complaints
     get:
       parameters:
       - description: アバターID
@@ -98,6 +221,33 @@ paths:
         "500":
           description: Internal Server Error
       summary: avatarIdで検索したComplaintを1件返す
+      tags:
+      - Complaints
+  /complaints/between-time:
+    get:
+      parameters:
+      - description: "2022-11-27 0:00:00"
+        in: query
+        name: from
+        type: string
+      - description: "2022-11-28 0:00:00"
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Complaint'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: 更新日時がfrom, toの間のComplaintを返す
       tags:
       - Complaints
 swagger: "2.0"

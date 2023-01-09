@@ -54,7 +54,7 @@ make create-migration
 ```sh
 make migrateup
 ```
-  - ※初回はエラーが出るので二度実施する(一度目でMigrate自体は実施されるだが、schema_migration の関係でエラーが出る。二度目はMigrateが実施されないが、エラーが出ない(dirty が解消される))
+  - ※新しく作成したMigrationファイルに対するMigrationについて、初回はエラーが出るので二度実施する(一度目でMigrate自体は実施されるだが、schema_migration の関係でエラーが出る。二度目はMigrateが実施されないが、エラーが出ない(dirty が解消される))
 
 ## 環境
 - 設定ファイルは下記。`GUCHITTER_ENV`の値に応じて読み込まれる。

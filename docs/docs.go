@@ -371,8 +371,33 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatarId": {
+                    "type": "integer",
+                    "example": 1234567890
+                },
+                "avatarName": {
                     "type": "string",
-                    "example": "1"
+                    "example": "Nino"
+                },
+                "avatarText": {
+                    "type": "string",
+                    "example": "なのよ"
+                },
+                "color": {
+                    "type": "string",
+                    "example": "#f6f6f6"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "example": "https://hoge.com/fuga"
+                }
+            }
+        },
+        "model.Complaint": {
+            "type": "object",
+            "properties": {
+                "avatarId": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "complaintId": {
                     "description": "ID, CreatedAt, UpdatedAt, DeletedAt が付与される\n=\u003e Error 1054: Unknown column 'created_at' in 'field list'のエラー\ngorm.Model\nタグ` + "`" + `gorm:\"primaryKey\"` + "`" + `を付与。goの構造体は、複数のタグがある場合は半角スペースで区切って記載",

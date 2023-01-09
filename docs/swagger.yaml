@@ -10,6 +10,9 @@ definitions:
       avatarText:
         example: なのよ
         type: string
+      color:
+        example: '#f6f6f6'
+        type: string
       imageUrl:
         example: https://hoge.com/fuga
         type: string
@@ -17,8 +20,8 @@ definitions:
   model.Complaint:
     properties:
       avatarId:
-        example: "1"
-        type: string
+        example: 1
+        type: integer
       complaintId:
         description: |-
           ID, CreatedAt, UpdatedAt, DeletedAt が付与される

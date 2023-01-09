@@ -1,9 +1,35 @@
 definitions:
+  model.Avatar:
+    properties:
+      avatarId:
+        example: 1234567890
+        type: integer
+      avatarName:
+        example: Nino
+        type: string
+      avatarText:
+        example: なのよ
+        type: string
+      color:
+        example: '#f6f6f6'
+        type: string
+      imageUrl:
+        example: https://hoge.com/fuga
+        type: string
+    type: object
   model.Complaint:
     properties:
       avatarId:
-        example: "1"
-        type: string
+        example: 1
+        type: integer
+      complaintId:
+        description: |-
+          ID, CreatedAt, UpdatedAt, DeletedAt が付与される
+          => Error 1054: Unknown column 'created_at' in 'field list'のエラー
+          gorm.Model
+          タグ`gorm:"primaryKey"`を付与。goの構造体は、複数のタグがある場合は半角スペースで区切って記載
+        example: 56
+        type: integer
       complaintText:
         example: 勘弁してくれ!
         type: string

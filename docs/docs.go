@@ -361,27 +361,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "なのよ"
                 },
-                "imageUrl": {
-                    "type": "string",
-                    "example": "https://hoge.com/fuga"
-                }
-            }
-        },
-        "model.Complaint": {
-            "type": "object",
-            "properties": {
-                "avatarId": {
-                    "type": "integer",
-                    "example": 1234567890
-                },
-                "avatarName": {
-                    "type": "string",
-                    "example": "Nino"
-                },
-                "avatarText": {
-                    "type": "string",
-                    "example": "なのよ"
-                },
                 "color": {
                     "type": "string",
                     "example": "#f6f6f6"

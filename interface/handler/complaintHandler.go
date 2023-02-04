@@ -8,6 +8,7 @@ import (
 	"github.com/backend-guchitter-app/domain/model"
 	"github.com/backend-guchitter-app/logging"
 	"github.com/backend-guchitter-app/usecase"
+	"github.com/backend-guchitter-app/util/errors"
 	"github.com/bloom42/rz-go"
 	"github.com/gin-gonic/gin"
 )
@@ -44,7 +45,13 @@ func (ch complaintHandler) Index(c *gin.Context) {
 	complaints, err := ch.complaintUseCase.FindAll()
 	if err != nil {
 		logging.Log.Error("Failed at FindAll()", rz.Err(err))
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		// c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		// c.IndentedJSON(http.StatusInternalServerError, &errors.ErrorStruct{
+		// 	Message: "Internal Server Error",
+		// })
+		c.JSON(http.StatusInternalServerError, &errors.ErrorStruct{
+			Message: "Internal Server Error",
+		})
 	}
 	c.IndentedJSON(http.StatusOK, complaints)
 }
@@ -63,9 +70,11 @@ func (ch complaintHandler) Search(c *gin.Context) {
 	complaint, err := ch.complaintUseCase.FindByAvatarId(id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	if complaint == nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, complaint)
 }
@@ -90,6 +99,7 @@ func (ch complaintHandler) Create(c *gin.Context) {
 	result, err := ch.complaintUseCase.Create(*newComplaint)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, result)
 }
@@ -110,9 +120,11 @@ func (ch complaintHandler) FindBetweenTimestamp(c *gin.Context) {
 	complaintList, err := ch.complaintUseCase.FindBetweenTimestamp(from, to)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	if len(complaintList) == 0 {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, complaintList)
 }
@@ -131,6 +143,7 @@ func (ch complaintHandler) DeleteByComplaintId(c *gin.Context) {
 	err := ch.complaintUseCase.DeleteByComplaintId(id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	c.Status(http.StatusNoContent)
 }

@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>usecase: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/backend-guchitter-app/usecase/avatarUsecase.go (0.0%)</option>
+				
+				<option value="file1">github.com/backend-guchitter-app/usecase/complaintUsecase.go (36.4%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package usecase
+
+import (
+        "github.com/backend-guchitter-app/domain/model"
+        "github.com/backend-guchitter-app/domain/repository"
+)
+
+type AvatarUseCase interface {
+        FindAll() ([]*model.Avatar, error)
+        FindByAvatarId(id int) (*model.Avatar, error)
+        Create(avatar model.Avatar) (*model.Avatar, error)
+        FindBetweenTimestamp(from string, to string) ([]*model.Avatar, error)
+        DeleteByAvatarId(id int) error
+}
+
+type avatarUseCase struct {
+        avatarRepository repository.AvatarRepository
+}
+
+func NewAvatarUseCase(cr repository.AvatarRepository) AvatarUseCase <span class="cov0" title="0">{
+        return &amp;avatarUseCase{
+                avatarRepository: cr,
+        }
+}</span>
+
+func (cu avatarUseCase) FindAll() ([]*model.Avatar, error) <span class="cov0" title="0">{
+        avatarList, err := cu.avatarRepository.FindAll()
+        return avatarList, err
+}</span>
+
+func (cu avatarUseCase) FindByAvatarId(id int) (*model.Avatar, error) <span class="cov0" title="0">{
+        avatar, err := cu.avatarRepository.FindByAvatarId(id)
+        return avatar, err
+}</span>
+
+func (cu avatarUseCase) Create(avatar model.Avatar) (*model.Avatar, error) <span class="cov0" title="0">{
+        result, err := cu.avatarRepository.Create(avatar)
+        return result, err
+}</span>
+
+func (cu avatarUseCase) FindBetweenTimestamp(from string, to string) ([]*model.Avatar, error) <span class="cov0" title="0">{
+        avatarList, err := cu.avatarRepository.FindBetweenTimestamp(from, to)
+        return avatarList, err
+}</span>
+
+func (cu avatarUseCase) DeleteByAvatarId(id int) error <span class="cov0" title="0">{
+        err := cu.avatarRepository.DeleteByAvatarId(id)
+        return err
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package usecase
+
+import (
+        "github.com/backend-guchitter-app/domain/model"
+        "github.com/backend-guchitter-app/domain/repository"
+)
+
+type ComplaintUseCase interface {
+        FindAll() ([]*model.Complaint, error)
+        FindByAvatarId(id int) (*model.Complaint, error)
+        Create(complaint model.Complaint) (*model.Complaint, error)
+        FindBetweenTimestamp(from string, to string) ([]*model.Complaint, error)
+        DeleteByComplaintId(id int) error
+}
+
+type complaintUseCase struct {
+        complaintRepository repository.ComplaintRepository
+}
+
+func NewComplaintUseCase(cr repository.ComplaintRepository) ComplaintUseCase <span class="cov0" title="0">{
+        return &amp;complaintUseCase{
+                complaintRepository: cr,
+        }
+}</span>
+
+func (cu complaintUseCase) FindAll() ([]*model.Complaint, error) <span class="cov8" title="1">{
+        complaintList, err := cu.complaintRepository.FindAll()
+        return complaintList, err
+}</span>
+
+func (cu complaintUseCase) FindByAvatarId(id int) (*model.Complaint, error) <span class="cov8" title="1">{
+        complaint, err := cu.complaintRepository.FindByAvatarId(id)
+        return complaint, err
+}</span>
+
+func (cu complaintUseCase) Create(complaint model.Complaint) (*model.Complaint, error) <span class="cov0" title="0">{
+        result, err := cu.complaintRepository.Create(complaint)
+        return result, err
+}</span>
+
+func (cu complaintUseCase) FindBetweenTimestamp(from string, to string) ([]*model.Complaint, error) <span class="cov0" title="0">{
+        complaintList, err := cu.complaintRepository.FindBetweenTimestamp(from, to)
+        return complaintList, err
+}</span>
+
+func (cu complaintUseCase) DeleteByComplaintId(id int) error <span class="cov0" title="0">{
+        err := cu.complaintRepository.DeleteByComplaintId(id)
+        return err
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 
 	"github.com/backend-guchitter-app/domain/model"
 	"github.com/backend-guchitter-app/usecase"
 	"github.com/backend-guchitter-app/util/errors"
+	testutils "github.com/backend-guchitter-app/util/testUtils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -106,8 +105,7 @@ func Test_complaintHandler_Index(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
+			w, c := testutils.SetupGinContext()
 
 			ch := complaintHandler{
 				complaintUseCase: tt.fields.complaintUseCase,
@@ -210,11 +208,10 @@ func Test_complaintHandler_Search(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
-			// リクエストパラメータを追加する
-			c.Params = append(
-				c.Params, gin.Param{Key: "id", Value: tt.arg},
+			w, c := testutils.SetupGinContextWithParam(
+				[]gin.Param{
+					{Key: "id", Value: tt.arg},
+				},
 			)
 
 			ch := complaintHandler{
@@ -300,19 +297,7 @@ func Test_complaintHandler_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
-			// リクエストパラメータを追加する
-			// reqBody, _ := json.Marshal(tt.arg)
-			jsonValue, _ := json.Marshal(tt.arg)
-			reqBody := bytes.NewBuffer(jsonValue)
-			// c.Request.Body = reqBody
-			req, _ := http.NewRequest(
-				"POST",
-				"",
-				reqBody,
-			)
-			c.Request = req
+			w, c := testutils.SetupGinContextWithBody(tt.arg)
 			ch := complaintHandler{
 				complaintUseCase: tt.fields.complaintUseCase,
 			}
@@ -422,22 +407,15 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
+			w, c := testutils.SetupGinContextWithQuery(
+				[]gin.Param{
+					{Key: "from", Value: tt.args.from},
+					{Key: "to", Value: tt.args.to},
+				},
+			)
 			ch := complaintHandler{
 				complaintUseCase: tt.fields.complaintUseCase,
 			}
-			// リクエストクエリを設定する
-			req, _ := http.NewRequest(
-				http.MethodPost,
-				"",
-				nil,
-			)
-			q := req.URL.Query()
-			q.Add("from", tt.args.from)
-			q.Add("to", tt.args.to)
-			req.URL.RawQuery = q.Encode()
-			c.Request = req
 			ch.FindBetweenTimestamp(c)
 
 			// ステータスコードのアサーション
@@ -457,12 +435,22 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 				// レスポンスJSONのアサーション
 				// ↓it causes nil pointer panic at !reflect.DeepEqual
 				// var complaint model.Complaint
-				var complaintList []*model.Complaint
-				fmt.Printf("w.Body.Bytes(): %s", w.Body.String())
-				json.Unmarshal(w.Body.Bytes(), &complaintList)
-				if !reflect.DeepEqual(complaintList, tt.wantBody) {
-					t.Errorf("complaintHandler.FindBetweenTimestamp() = %v, want %v", complaintList, tt.wantBody)
+				// var complaintList []*model.Complaint
+				// fmt.Printf("w.Body.Bytes(): %s", w.Body.String())
+				// json.Unmarshal(w.Body.Bytes(), &complaintList)
+				// if !reflect.DeepEqual(complaintList, tt.wantBody) {
+				// 	t.Errorf("complaintHandler.FindBetweenTimestamp() = %v, want %v", complaintList, tt.wantBody)
+				// }
+
+				/** 文字列同士でのアサーション */
+				jsonByte, _ := json.Marshal(tt.wantBody)
+				jsonStr := bytes.NewBuffer(jsonByte).String()
+				fmt.Printf("w.Body.String(): %v\n", w.Body.String())
+				fmt.Printf("jsonStr: %v\n", jsonStr)
+				if !reflect.DeepEqual(w.Body.String(), jsonStr) {
+					t.Errorf("complaintHandler.FindBetweenTimestamp() = %v, want %v", w.Body.String(), jsonStr)
 				}
+
 			}
 		})
 
@@ -510,24 +498,33 @@ func Test_complaintHandler_DeleteByComplaintId(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
+			w, c := testutils.SetupGinContext()
 			ch := complaintHandler{
 				complaintUseCase: tt.fields.complaintUseCase,
 			}
 			ch.DeleteByComplaintId(c)
 			// ステータスコードのアサーション
-			if !reflect.DeepEqual(w.Code, tt.wantStatus) {
+			if !reflect.DeepEqual(c, tt.wantStatus) {
 				t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", w.Code, tt.wantStatus)
 			}
 
 			// 異常系のレスポンスJSONのアサーション
 			if tt.wantErr != nil {
-				var errorStruct *errors.ErrorStruct
-				fmt.Printf("w.Body.Bytes(): %s", w.Body.String())
-				json.Unmarshal(w.Body.Bytes(), &errorStruct)
-				if !reflect.DeepEqual(errorStruct, tt.wantErr) {
-					t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", errorStruct, tt.wantErr)
+				/** 【パターン1】jsonを構造体にマッピングして構造体同士でアサーション*/
+				// var errorStruct *errors.ErrorStruct
+				// fmt.Printf("w.Body.Bytes(): %s", w.Body.String())
+				// json.Unmarshal(w.Body.Bytes(), &errorStruct)
+				// if !reflect.DeepEqual(errorStruct, tt.wantErr) {
+				// 	t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", errorStruct, tt.wantErr)
+				// }
+
+				/** 【パターン2】jsonを文字列に、構造体も文字列にマッピングして。文字列同士でアサーション*/
+				fmt.Printf("w.Body.Sring(): %s\n", w.Body.String())
+				jsonByte, _ := json.Marshal(tt.wantErr)
+				jsonStr := bytes.NewBuffer(jsonByte).String()
+				fmt.Printf("jsonStr: %s\n", jsonStr)
+				if !reflect.DeepEqual(w.Body.String(), jsonStr) {
+					t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", w.Body.String(), jsonStr)
 				}
 			}
 		})

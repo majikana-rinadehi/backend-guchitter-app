@@ -45,15 +45,15 @@ func (ch complaintHandler) Index(c *gin.Context) {
 	complaints, err := ch.complaintUseCase.FindAll()
 	if err != nil {
 		logging.Log.Error("Failed at FindAll()", rz.Err(err))
-		// c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
-		// c.IndentedJSON(http.StatusInternalServerError, &errors.ErrorStruct{
+		// c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		// c.JSON(http.StatusInternalServerError, &errors.ErrorStruct{
 		// 	Message: "Internal Server Error",
 		// })
 		c.JSON(http.StatusInternalServerError, &errors.ErrorStruct{
 			Message: "Internal Server Error",
 		})
 	}
-	c.IndentedJSON(http.StatusOK, complaints)
+	c.JSON(http.StatusOK, complaints)
 }
 
 // Search
@@ -69,14 +69,14 @@ func (ch complaintHandler) Search(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	complaint, err := ch.complaintUseCase.FindByAvatarId(id)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		return
 	}
 	if complaint == nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Not Found"})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, complaint)
+	c.JSON(http.StatusOK, complaint)
 }
 
 // Create
@@ -98,10 +98,10 @@ func (ch complaintHandler) Create(c *gin.Context) {
 	}
 	result, err := ch.complaintUseCase.Create(*newComplaint)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, result)
 }
 
 // FindBetweenTimestamp
@@ -119,14 +119,14 @@ func (ch complaintHandler) FindBetweenTimestamp(c *gin.Context) {
 	to := c.Query("to")
 	complaintList, err := ch.complaintUseCase.FindBetweenTimestamp(from, to)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		return
 	}
 	if len(complaintList) == 0 {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Not Found"})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, complaintList)
+	c.JSON(http.StatusOK, complaintList)
 }
 
 // DeleteByComplaintId
@@ -142,8 +142,10 @@ func (ch complaintHandler) DeleteByComplaintId(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err := ch.complaintUseCase.DeleteByComplaintId(id)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		// c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		return
 	}
+	// unittestだと200になってしまう、なぜ？？？
 	c.Status(http.StatusNoContent)
 }

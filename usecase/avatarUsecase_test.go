@@ -35,6 +35,10 @@ func (m *avatarRepoMock) FindBetweenTimestamp(from string, to string) ([]*model.
 	return m.FakeFindBetweenTimestamp(from, to)
 }
 
+func (m *avatarRepoMock) DeleteByAvatarId(id int) error {
+	return m.FakeDeleteByAvatarId(id)
+}
+
 var (
 	// ダミーのavatar
 	fakeAvatar = &model.Avatar{
@@ -254,6 +258,15 @@ func Test_avatarUseCase_FindBetweenTimestamp(t *testing.T) {
 }
 
 func Test_avatarUseCase_DeleteByAvatarId(t *testing.T) {
+	mockRepo := avatarRepoMock{
+		FakeDeleteByAvatarId: func(id int) error {
+			if id == 999 {
+				return gorm.ErrRecordNotFound
+			}
+			return nil
+		},
+	}
+
 	type fields struct {
 		avatarRepository repository.AvatarRepository
 	}
@@ -264,16 +277,36 @@ func Test_avatarUseCase_DeleteByAvatarId(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
+		{
+			name: "Test_avatarUseCase_DeleteByAvatarId_normal",
+			fields: fields{
+				avatarRepository: &mockRepo,
+			},
+			args: args{
+				id: 1,
+			},
+			wantErr: nil,
+		},
+		{
+			name: "Test_avatarUseCase_DeleteByAvatarId_anormal",
+			fields: fields{
+				avatarRepository: &mockRepo,
+			},
+			args: args{
+				id: 999,
+			},
+			wantErr: gorm.ErrRecordNotFound,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cu := avatarUseCase{
 				avatarRepository: tt.fields.avatarRepository,
 			}
-			if err := cu.DeleteByAvatarId(tt.args.id); (err != nil) != tt.wantErr {
+			if err := cu.DeleteByAvatarId(tt.args.id); err != tt.wantErr {
 				t.Errorf("avatarUseCase.DeleteByAvatarId() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -1,0 +1,14 @@
+- complaint_id: 1
+  complaint_text: あああ
+  avatar_id: 1
+  last_update: 2023-05-06 14:00:00
+
+- complaint_id: 2
+  complaint_text: いいい
+  avatar_id: 1
+  last_update: 2023-05-06 15:00:00
+
+- complaint_id: 3
+  complaint_text: ううう
+  avatar_id: 1
+  last_update: 2023-05-06 16:00:00

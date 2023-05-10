@@ -24,11 +24,32 @@ func main() {
 	// extract command line args
 	flag.Parse()
 	args := flag.Args()
-	for i := 0; i < len(args); i++ {
-		fmt.Printf("args[%d]: %v\n", i, args[i])
+	fmt.Println("args:", args)
+
+	// ↓↓↓これもうまく行かない
+	// isTest := flag.CommandLine.Lookup("test")
+
+	isTest := false
+	// ↓↓↓何故か一回も呼ばれない...
+	// flag.Visit(func(f *flag.Flag) {
+	// 	fmt.Println("f.Name:", f.Name)
+	// 	if f.Name == "test" {
+	// 		isTest = true
+	// 	}
+	// })
+	for _, arg := range args {
+		if arg == "--test" {
+			isTest = true
+		}
 	}
 
-	m := newMigrate()
+	var m *migrate.Migrate
+	if isTest {
+		// migrate for test db
+		m = newMigrate(true)
+	} else {
+		m = newMigrate(false)
+	}
 	v, dirty, versionErr := m.Version()
 	if versionErr != nil {
 		fmt.Println(errors.Wrap(versionErr, "error at m.Version()"))
@@ -60,8 +81,8 @@ func main() {
 	}
 }
 
-func newMigrate() *migrate.Migrate {
-	dsn := config.GetDsn()
+func newMigrate(isTest bool) *migrate.Migrate {
+	dsn := config.GetDsn(isTest)
 	fmt.Println("dsn:", dsn)
 
 	db, openErr := sql.Open("mysql", dsn)

@@ -1,0 +1,20 @@
+- avatar_id: 1
+  avatar_name: あああ
+  avatar_text: あああ
+  image_url: https://example.com
+  color: "#ffffff"
+  last_update: 2023-05-06 14:00:00
+
+- avatar_id: 2
+  avatar_name: いいい
+  avatar_text: いいい
+  image_url: https://example.com
+  color: "#ffffff"
+  last_update: 2023-05-06 15:00:00
+
+- avatar_id: 3
+  avatar_name: ううう
+  avatar_text: ううう
+  image_url: https://example.com
+  color: "#ffffff"
+  last_update: 2023-05-06 16:00:00

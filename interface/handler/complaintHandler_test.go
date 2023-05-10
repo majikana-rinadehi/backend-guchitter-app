@@ -504,8 +504,12 @@ func Test_complaintHandler_DeleteByComplaintId(t *testing.T) {
 			}
 			ch.DeleteByComplaintId(c)
 			// ステータスコードのアサーション
-			if !reflect.DeepEqual(c, tt.wantStatus) {
-				t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", w.Code, tt.wantStatus)
+			// if !reflect.DeepEqual(w.Code, tt.wantStatus) {
+			// if !reflect.DeepEqual(w.Result().StatusCode, tt.wantStatus) {
+			if !reflect.DeepEqual(c.Writer.Status(), tt.wantStatus) {
+				// t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", w.Code, tt.wantStatus)
+				// t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", w.Result().StatusCode, tt.wantStatus)
+				t.Errorf("complaintHandler.DeleteByComplaintId() = %v, want %v", c.Writer.Status(), tt.wantStatus)
 			}
 
 			// 異常系のレスポンスJSONのアサーション

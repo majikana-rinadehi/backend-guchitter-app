@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -11,7 +12,7 @@ import (
 
 func Connect() *gorm.DB {
 
-	CONNECT := GetDsn()
+	CONNECT := GetDsn(false)
 
 	db, err := gorm.Open(mysql.Open(CONNECT), &gorm.Config{
 		// level infoに設定することでSQLがログ出力される
@@ -26,13 +27,35 @@ func Connect() *gorm.DB {
 
 }
 
-func GetDsn() string {
+func ConnectTest() *gorm.DB {
+
+	CONNECT := GetDsn(true)
+	fmt.Println("dsn:", CONNECT)
+
+	db, err := gorm.Open(mysql.Open(CONNECT), &gorm.Config{
+		// level infoに設定することでSQLがログ出力される
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+
+	if err != nil {
+		panic("connect failed")
+	}
+
+	return db
+
+}
+
+func GetDsn(isTest bool) string {
 	env := os.Getenv("GUCHITTER_ENV")
 
 	if env == "production" {
 		env = "production"
 	} else {
 		env = "development"
+	}
+
+	if isTest {
+		env = "test"
 	}
 
 	godotenv.Load(".env." + env)

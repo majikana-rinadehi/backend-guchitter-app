@@ -31,18 +31,18 @@ func (cp *complaintPersistence) FindAll() (complaintList []*model.Complaint, err
 	return complaintList, nil
 }
 
-func (cp *complaintPersistence) FindByAvatarId(id int) (complaint *model.Complaint, err error) {
+func (cp *complaintPersistence) FindByAvatarId(id int) (complaint *model.Complaint, errResult error) {
 	db := cp.Conn
 
 	// Typeormみたくカラム名をキャメルケース(avatarId)にするとエラー
-	err = db.First(&complaint, "avatar_id = ?", id).Error
+	err := db.First(&complaint, "avatar_id = ?", id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		complaint = nil
 	} else if err != nil {
 		return nil, err
 	}
 
-	return complaint, nil
+	return complaint, err
 }
 
 func (cp *complaintPersistence) Create(complaint model.Complaint) (*model.Complaint, error) {

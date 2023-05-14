@@ -17,59 +17,89 @@ import (
 
 const fixturesDirRelativePathFormat = "%s/../../infrastructure/persistence/fixtures"
 
+// 可変長引数を、DialOptの方法で記載する
+// cf. https://wp.jmuk.org/2018/01/06/go%E3%81%AE%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%8A%E3%83%AB%E5%BC%95%E6%95%B0/
+type ginOptions struct {
+	withParam bool
+	params    []gin.Param
+
+	withBody bool
+	model    any
+
+	withQuery bool
+	queryList []gin.Param
+}
+
+type GinOption func(o *ginOptions)
+
 // gin用のRecorder, Contextを作成
-func SetupGinContext() (*httptest.ResponseRecorder, *gin.Context) {
+func SetupGinContext(options ...GinOption) (*httptest.ResponseRecorder, *gin.Context) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	return w, c
-}
 
-// gin用のRecorder, Contextを作成(リクエストパラメータ)
-func SetupGinContextWithParam(params []gin.Param) (*httptest.ResponseRecorder, *gin.Context) {
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	// リクエストパラメータを追加する
-	for _, p := range params {
-		c.Params = append(
-			c.Params, p,
+	opt := ginOptions{}
+	// setup options
+	for _, o := range options {
+		o(&opt)
+	}
+
+	if opt.withParam {
+		// リクエストパラメータを追加する
+		for _, p := range opt.params {
+			c.Params = append(
+				c.Params, p,
+			)
+		}
+	}
+
+	if opt.withBody {
+		// リクエストボディを追加する
+		jsonValue, _ := json.Marshal(opt.model)
+		reqBody := bytes.NewBuffer(jsonValue)
+		req, _ := http.NewRequest(
+			"POST",
+			"",
+			reqBody,
 		)
+		c.Request = req
+	}
+
+	if opt.withQuery {
+		// リクエストクエリを設定する
+		req, _ := http.NewRequest(
+			http.MethodPost,
+			"",
+			nil,
+		)
+		q := req.URL.Query()
+		for _, query := range opt.queryList {
+			q.Add(query.Key, query.Value)
+		}
+		req.URL.RawQuery = q.Encode()
+		c.Request = req
 	}
 	return w, c
 }
 
-// gin用のRecorder, Contextを作成(リクエストボディ)
-func SetupGinContextWithBody(model any) (*httptest.ResponseRecorder, *gin.Context) {
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	// リクエストボディを追加する
-	jsonValue, _ := json.Marshal(model)
-	reqBody := bytes.NewBuffer(jsonValue)
-	req, _ := http.NewRequest(
-		"POST",
-		"",
-		reqBody,
-	)
-	c.Request = req
-	return w, c
+func WithParam(params []gin.Param) GinOption {
+	return func(opt *ginOptions) {
+		opt.withParam = true
+		opt.params = params
+	}
 }
 
-// gin用のRecorder, Contextを作成(リクエストクエリ)
-func SetupGinContextWithQuery(queryList []gin.Param) (*httptest.ResponseRecorder, *gin.Context) {
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	// リクエストクエリを設定する
-	req, _ := http.NewRequest(
-		http.MethodPost,
-		"",
-		nil,
-	)
-	q := req.URL.Query()
-	for _, query := range queryList {
-		q.Add(query.Key, query.Value)
+func WithBody(model any) GinOption {
+	return func(opt *ginOptions) {
+		opt.withBody = true
+		opt.model = model
 	}
-	req.URL.RawQuery = q.Encode()
-	c.Request = req
-	return w, c
+}
+
+func WithQuery(queryList []gin.Param) GinOption {
+	return func(opt *ginOptions) {
+		opt.withQuery = true
+		opt.queryList = queryList
+	}
 }
 
 // SetTestEnv sets env values of db conn for repository unit test

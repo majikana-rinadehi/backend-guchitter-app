@@ -368,6 +368,13 @@ func Test_avatarPersistence_FindBetweenTimestamp(t *testing.T) {
 }
 
 func Test_avatarPersistence_DeleteByAvatarId(t *testing.T) {
+
+	// setup env
+	testUtils.SetTestEnv(t)
+
+	// setup db
+	testUtils.SetupFixtures()
+
 	type fields struct {
 		Conn *gorm.DB
 	}
@@ -378,16 +385,26 @@ func Test_avatarPersistence_DeleteByAvatarId(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
+		{
+			name: "Test_avatarPersistence_DeleteByAvatarId_Normal",
+			fields: fields{
+				Conn: config.ConnectTest(),
+			},
+			args: args{
+				id: 1,
+			},
+			wantErr: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cp := &avatarPersistence{
 				Conn: tt.fields.Conn,
 			}
-			if err := cp.DeleteByAvatarId(tt.args.id); (err != nil) != tt.wantErr {
+			if err := cp.DeleteByAvatarId(tt.args.id); err != nil && err != tt.wantErr {
 				t.Errorf("avatarPersistence.DeleteByAvatarId() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

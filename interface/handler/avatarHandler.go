@@ -45,6 +45,7 @@ func (ch avatarHandler) Index(c *gin.Context) {
 	if err != nil {
 		logging.Log.Error("Failed at FindAll()", rz.Err(err))
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, avatars)
 }
@@ -63,9 +64,11 @@ func (ch avatarHandler) Search(c *gin.Context) {
 	avatar, err := ch.avatarUseCase.FindByAvatarId(id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	if avatar == nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, avatar)
 }
@@ -90,6 +93,7 @@ func (ch avatarHandler) Create(c *gin.Context) {
 	result, err := ch.avatarUseCase.Create(*newAvatar)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, result)
 }
@@ -110,9 +114,11 @@ func (ch avatarHandler) FindBetweenTimestamp(c *gin.Context) {
 	avatarList, err := ch.avatarUseCase.FindBetweenTimestamp(from, to)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	if len(avatarList) == 0 {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Not Found"})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, avatarList)
 }
@@ -131,6 +137,7 @@ func (ch avatarHandler) DeleteByAvatarId(c *gin.Context) {
 	err := ch.avatarUseCase.DeleteByAvatarId(id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
 	}
 	c.Status(http.StatusNoContent)
 }

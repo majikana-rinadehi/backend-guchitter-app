@@ -51,8 +51,6 @@ var (
 		ComplaintText: "あああ",
 		AvatarId:      1,
 	}
-	errorJson    = &errors.ErrorStruct{Message: "Internal Server Error"}
-	notFoundJson = &errors.ErrorStruct{Message: "Not Found"}
 )
 
 func Test_complaintHandler_Index(t *testing.T) {
@@ -96,7 +94,7 @@ func Test_complaintHandler_Index(t *testing.T) {
 			},
 			wantStatus: 500,
 			wantBody:   nil,
-			wantErr:    errorJson,
+			wantErr:    tu.ErrorJson,
 		},
 	}
 	for _, tt := range tests {
@@ -166,7 +164,7 @@ func Test_complaintHandler_Search(t *testing.T) {
 			},
 			wantStatus: 500,
 			wantBody:   &fakeComplaint,
-			wantErr:    errorJson,
+			wantErr:    tu.ErrorJson,
 		},
 		{
 			name: "Test_complaintHandler_Search_404",
@@ -176,7 +174,7 @@ func Test_complaintHandler_Search(t *testing.T) {
 			},
 			wantStatus: 404,
 			wantBody:   &fakeComplaint,
-			wantErr:    notFoundJson,
+			wantErr:    tu.NotFoundJson,
 		},
 	}
 	for _, tt := range tests {
@@ -247,7 +245,7 @@ func Test_complaintHandler_Create(t *testing.T) {
 			},
 			wantStatus: 500,
 			wantBody:   &fakeComplaint,
-			wantErr:    errorJson,
+			wantErr:    tu.ErrorJson,
 		},
 	}
 	for _, tt := range tests {
@@ -327,7 +325,7 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 			},
 			wantStatus: 404,
 			wantBody:   fakeComplaintList,
-			wantErr:    notFoundJson,
+			wantErr:    tu.NotFoundJson,
 		},
 		{
 			name: "FindBetweenTimestamp_500",
@@ -340,7 +338,7 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 			},
 			wantStatus: 500,
 			wantBody:   fakeComplaintList,
-			wantErr:    errorJson,
+			wantErr:    tu.ErrorJson,
 		},
 	}
 	for _, tt := range tests {
@@ -405,7 +403,7 @@ func Test_complaintHandler_DeleteByComplaintId(t *testing.T) {
 				complaintUseCase: mockUsecaseErr,
 			},
 			wantStatus: 500,
-			wantErr:    errorJson,
+			wantErr:    tu.ErrorJson,
 		},
 	}
 	for _, tt := range tests {

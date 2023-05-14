@@ -12,11 +12,19 @@ import (
 	"testing"
 
 	config "github.com/backend-guchitter-app/config"
+	"github.com/backend-guchitter-app/util/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-testfixtures/testfixtures/v3"
 )
 
-const fixturesDirRelativePathFormat = "%s/../../infrastructure/persistence/fixtures"
+var (
+	ErrorJson    = &errors.ErrorStruct{Message: "Internal Server Error"}
+	NotFoundJson = &errors.ErrorStruct{Message: "Not Found"}
+)
+
+const (
+	fixturesDirRelativePathFormat = "%s/../../infrastructure/persistence/fixtures"
+)
 
 // 可変長引数を、DialOptの方法で記載する
 // cf. https://wp.jmuk.org/2018/01/06/go%E3%81%AE%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%8A%E3%83%AB%E5%BC%95%E6%95%B0/

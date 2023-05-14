@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path"
+	"reflect"
 	"runtime"
 	"testing"
 
@@ -78,6 +79,7 @@ func SetupGinContext(options ...GinOption) (*httptest.ResponseRecorder, *gin.Con
 		req.URL.RawQuery = q.Encode()
 		c.Request = req
 	}
+
 	return w, c
 }
 
@@ -99,6 +101,23 @@ func WithQuery(queryList []gin.Param) GinOption {
 	return func(opt *ginOptions) {
 		opt.withQuery = true
 		opt.queryList = queryList
+	}
+}
+
+// AssertStatusCode asserts status code
+func AssertStatusCode(t *testing.T, c *gin.Context, wantCode int) {
+	// ステータスコードのアサーション
+	if !reflect.DeepEqual(c.Writer.Status(), wantCode) {
+		t.Errorf("assert status code: got = %v, want %v", c.Writer.Status(), wantCode)
+	}
+}
+
+// AssertResponse asserts response json
+func AssertResponse[T interface{}](t *testing.T, w *httptest.ResponseRecorder, want T) {
+	var gotBody T
+	json.Unmarshal(w.Body.Bytes(), &gotBody)
+	if !reflect.DeepEqual(gotBody, want) {
+		t.Errorf("assert response body: got = %v, want %v", gotBody, want)
 	}
 }
 

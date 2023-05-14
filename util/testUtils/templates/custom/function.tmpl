@@ -2,6 +2,13 @@
 {{- $f := .}}
 
 func {{.TestName}}(t *testing.T) {
+	var mock = &mock{
+		// TODO: implement mock
+	}
+	var mockERR = &mock{
+		// TODO: implement mock for err
+	}
+
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}

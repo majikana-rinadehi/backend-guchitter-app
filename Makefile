@@ -17,3 +17,6 @@ build:
 
 build-migration:
 	go build -o bin/migration -v ./db
+
+gen-test:
+	gotests -template_dir="util/testUtils/templates/custom"  -w -all $(ARG)

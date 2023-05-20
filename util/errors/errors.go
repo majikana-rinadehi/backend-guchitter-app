@@ -5,7 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-playground/validator/v10"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	// "strings"
+	// "time"
 )
 
 const (
@@ -32,44 +34,45 @@ func InvalidTypeErrMsg(field, expectedType string) string {
 	return fmt.Sprintf(invalidTypeErrMsgFormat, field, expectedType)
 }
 
-type options struct {
-	// tag
-	tag string
-}
+func ValidateNotEmpty(fieldName string) validation.RuleFunc {
+	return func(value interface{}) error {
 
-type Option func(o *options)
-
-func Validate(value, fieldName string) []string {
-	validate := validator.New()
-	validate.RegisterValidation("custom_required", customRequired)
-
-	validateErr := validate.Var(value, "custom_required,number")
-
-	errMessages := make([]string, 0)
-	if validateErr == nil {
-		return errMessages
-	}
-	for _, err := range validateErr.(validator.ValidationErrors) {
-		typ := err.Tag()
-		switch typ {
-		case "custom_required":
-			errMessages = append(errMessages, RequiredErrMsg(fieldName))
-		case "number":
-			errMessages = append(errMessages, InvalidTypeErrMsg(fieldName, "number"))
-		default:
+		// 数値の場合
+		if _, ok := value.(int); ok {
+			return nil
 		}
+
+		// string型の場合
+		_, ok := value.(string)
+		if !ok {
+			return validation.NewError("InvalidType", "Invalid type")
+		}
+
+		if strings.TrimSpace(value.(string)) == "" {
+			return validation.NewError("Required", RequiredErrMsg(fieldName))
+		}
+		return nil
 	}
-
-	return errMessages
 }
 
-func customRequired(fl validator.FieldLevel) bool {
-	v := fl.Field().String()
-	return strings.TrimSpace(v) != ""
-}
+func ValidateYYYY_MM_DD(fieldName string) validation.RuleFunc {
+	return func(value interface{}) error {
 
-// dateValidation validates YYYY-mm-DD
-func dateValidation(fl validator.FieldLevel) bool {
-	_, err := time.Parse("2006-01-02", fl.Field().String())
-	return err != nil
+		dateStr, ok := value.(string)
+		if !ok {
+			return validation.NewError("InvalidType", "Invalid type")
+		}
+
+		if strings.TrimSpace(dateStr) == "" {
+			return nil
+		}
+
+		// 日付の解析を試みる
+		_, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return validation.NewError("InvalidDate", InvalidTypeErrMsg(fieldName, "YYYY-MM-DD"))
+		}
+
+		return nil
+	}
 }

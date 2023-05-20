@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"strconv"
@@ -11,6 +12,8 @@ import (
 	"github.com/backend-guchitter-app/util/errors"
 	"github.com/bloom42/rz-go"
 	"github.com/gin-gonic/gin"
+	"github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 type ComplaintHandler interface {
@@ -68,31 +71,19 @@ func (ch complaintHandler) Index(c *gin.Context) {
 // @Router /complaints/{id} [get]
 func (ch complaintHandler) Search(c *gin.Context) {
 	// 必須チェック
-	// validateErr := errors.Validate(c.Param("id"))
-	// fmt.Println(validateErr)
-	// if validateErr != nil {
-	// 	for _, err := range validateErr.(validator.ValidationErrors) {
-	// 		fieldName, typ := err.Field(), err.Tag()
-	// 		fmt.Println(fieldName, typ)
-	// 		switch typ {
-	// 		case "custom_required":
-	// 			c.JSON(http.StatusBadRequest, errors.ErrorStruct{
-	// 				Messages: ,
-	// 			}})
-	// 			return
-	// 		case "number":
-	// 			c.JSON(http.StatusBadRequest, gin.H{"message": errors.InvalidTypeErrMsg("id", "number")})
-	// 			return
-	// 		default:
+	vErr := validation.Validate(c.Param("id"),
+		validation.By(errors.ValidateNotEmpty("id")),
+		is.Int.Error(errors.InvalidTypeErrMsg("id", "number")),
+	)
 
-	// 		}
-	// 	}
-	// }
-
-	if errMessages := errors.Validate(c.Param("id"), "id"); len(errMessages) > 0 {
+	if vErr != nil {
+		validationErr := vErr.(validation.ErrorObject)
+		fmt.Println(validationErr)
 		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
 			Message: "Bad request.",
-			Fields:  errMessages,
+			Fields: []string{
+				validationErr.Error(),
+			},
 		})
 		return
 	}
@@ -120,14 +111,39 @@ func (ch complaintHandler) Search(c *gin.Context) {
 // @Failure 500
 // @Router /complaints [post]
 func (ch complaintHandler) Create(c *gin.Context) {
-	var newComplaint *model.Complaint
+	var newComplaint model.Complaint
 
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
 	if err := c.BindJSON(&newComplaint); err != nil {
 		return
 	}
-	result, err := ch.complaintUseCase.Create(*newComplaint)
+
+	vErr := validation.ValidateStruct(&newComplaint,
+		validation.Field(&newComplaint.ComplaintId,
+			validation.By(errors.ValidateNotEmpty("complaintId")),
+		),
+		validation.Field(&newComplaint.AvatarId,
+			validation.By(errors.ValidateNotEmpty("avatarId")),
+		),
+		validation.Field(&newComplaint.ComplaintText,
+			validation.By(errors.ValidateNotEmpty("complaintText")),
+		),
+	)
+
+	if vErr != nil {
+		validationErr := vErr.(validation.Errors)
+		errorMessages := make([]string, 0)
+		for _, e := range validationErr {
+			errorMessages = append(errorMessages, e.Error())
+		}
+		fmt.Println(validationErr)
+		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
+			Message: "Bad request.",
+			Fields:  errorMessages,
+		})
+		return
+	}
+
+	result, err := ch.complaintUseCase.Create(newComplaint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		return
@@ -148,6 +164,30 @@ func (ch complaintHandler) Create(c *gin.Context) {
 func (ch complaintHandler) FindBetweenTimestamp(c *gin.Context) {
 	from := c.Query("from")
 	to := c.Query("to")
+
+	s := struct {
+		from string
+		to   string
+	}{from, to}
+	vErr := validation.ValidateStruct(&s,
+		validation.Field(&s.from, validation.By(errors.ValidateYYYY_MM_DD("from"))),
+		validation.Field(&s.to, validation.By(errors.ValidateYYYY_MM_DD("to"))),
+	)
+
+	if vErr != nil {
+		validationErr := vErr.(validation.Errors)
+		errorMessages := make([]string, 0)
+		for _, e := range validationErr {
+			errorMessages = append(errorMessages, e.Error())
+		}
+		fmt.Println(validationErr)
+		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
+			Message: "Bad request.",
+			Fields:  errorMessages,
+		})
+		return
+	}
+
 	complaintList, err := ch.complaintUseCase.FindBetweenTimestamp(from, to)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})

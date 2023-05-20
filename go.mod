@@ -7,6 +7,7 @@ require (
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/requestid v0.0.6
 	github.com/gin-gonic/gin v1.8.1
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/joho/godotenv v1.5.1
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
@@ -21,8 +22,10 @@ require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.9.1 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
 	github.com/go-faster/city v1.0.1 // indirect
 	github.com/go-faster/errors v0.6.1 // indirect
+	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
 	github.com/paulmach/orb v0.9.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
@@ -42,7 +45,6 @@ require (
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.13.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/golang-migrate/migrate v3.5.4+incompatible

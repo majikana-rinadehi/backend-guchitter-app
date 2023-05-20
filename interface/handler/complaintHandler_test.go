@@ -292,6 +292,52 @@ func Test_complaintHandler_Create(t *testing.T) {
 			wantBody:   &fakeComplaint,
 			wantErr:    tu.ErrorJson,
 		},
+		// TODO: 構造体にフィールドが存在しなくても、
+		// *gin.Context.BindJSON()で 初期値が次のように入れられてしまう
+		// (golangの`zero value`)
+		// ので、フィールドが存在しないエラーのテストは一旦見送り
+		// {
+		// 	ComplaintId: 0,
+		// 	ComplaintText: "",
+		// 	AvatarId: 0
+		// }
+		// {
+		// 	name: "Test_complaintHandler_Create_400_nil",
+		// 	arg: &model.Complaint{
+		// 		ComplaintText: "テスト",
+		// 	},
+		// 	fields: fields{
+		// 		complaintUseCase: mockUsecase,
+		// 	},
+		// 	wantStatus: 400,
+		// 	wantBody:   &fakeComplaint,
+		// 	wantErr: &errors.ErrorStruct{
+		// 		Message: "Bad request.",
+		// 		Fields: []string{
+		// 			"Param 'complaintId' is required.",
+		// 			"Param 'avatarId' is required.",
+		// 		},
+		// 	},
+		// },
+		{
+			name: "Test_complaintHandler_Create_400_ComplaintText_empty",
+			arg: &model.Complaint{
+				ComplaintId:   1,
+				AvatarId:      1,
+				ComplaintText: "",
+			},
+			fields: fields{
+				complaintUseCase: mockUsecase,
+			},
+			wantStatus: 400,
+			wantBody:   &fakeComplaint,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'complaintText' is required.",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -384,6 +430,63 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 			wantStatus: 500,
 			wantBody:   fakeComplaintList,
 			wantErr:    tu.ErrorJson,
+		},
+		{
+			name: "FindBetweenTimestamp_400_not_date_1",
+			args: args{
+				from: "2022-01-011",
+				to:   "2022-01-011",
+			},
+			fields: fields{
+				complaintUseCase: mockUsecaseErr,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'from' must be a 'YYYY-MM-DD'",
+					"Param 'to' must be a 'YYYY-MM-DD'",
+				},
+			},
+		},
+		{
+			name: "FindBetweenTimestamp_400_not_date_2",
+			args: args{
+				from: "2022-01-32",
+				to:   "2022-01-32",
+			},
+			fields: fields{
+				complaintUseCase: mockUsecaseErr,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'from' must be a 'YYYY-MM-DD'",
+					"Param 'to' must be a 'YYYY-MM-DD'",
+				},
+			},
+		},
+		{
+			name: "FindBetweenTimestamp_400_not_date_3_leap",
+			args: args{
+				from: "2024-02-29", // OK
+				to:   "2024-02-30", // NG
+			},
+			fields: fields{
+				complaintUseCase: mockUsecaseErr,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					// "Param 'from' must be a 'YYYY-MM-DD'",
+					"Param 'to' must be a 'YYYY-MM-DD'",
+				},
+			},
 		},
 	}
 	for _, tt := range tests {

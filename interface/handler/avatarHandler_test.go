@@ -227,9 +227,6 @@ func Test_avatarHandler_Create(t *testing.T) {
 	type fields struct {
 		avatarUseCase usecase.AvatarUseCase
 	}
-	type args struct {
-		c *gin.Context
-	}
 	tests := []struct {
 		name       string
 		fields     fields

@@ -176,6 +176,51 @@ func Test_complaintHandler_Search(t *testing.T) {
 			wantBody:   &fakeComplaint,
 			wantErr:    tu.NotFoundJson,
 		},
+		{
+			name: "Test_complaintHandler_Search_400_empty",
+			arg:  "",
+			fields: fields{
+				complaintUseCase: mockUsecase,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'id' is required.",
+				},
+			},
+		},
+		{
+			name: "Test_complaintHandler_Search_400_space",
+			arg:  " ",
+			fields: fields{
+				complaintUseCase: mockUsecase,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'id' is required.",
+				},
+			},
+		},
+		{
+			name: "Test_complaintHandler_Search_400_not_number",
+			arg:  "あ",
+			fields: fields{
+				complaintUseCase: mockUsecase,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'id' must be a 'number'",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -67,6 +67,36 @@ func (ch complaintHandler) Index(c *gin.Context) {
 // @Failure 500
 // @Router /complaints/{id} [get]
 func (ch complaintHandler) Search(c *gin.Context) {
+	// 必須チェック
+	// validateErr := errors.Validate(c.Param("id"))
+	// fmt.Println(validateErr)
+	// if validateErr != nil {
+	// 	for _, err := range validateErr.(validator.ValidationErrors) {
+	// 		fieldName, typ := err.Field(), err.Tag()
+	// 		fmt.Println(fieldName, typ)
+	// 		switch typ {
+	// 		case "custom_required":
+	// 			c.JSON(http.StatusBadRequest, errors.ErrorStruct{
+	// 				Messages: ,
+	// 			}})
+	// 			return
+	// 		case "number":
+	// 			c.JSON(http.StatusBadRequest, gin.H{"message": errors.InvalidTypeErrMsg("id", "number")})
+	// 			return
+	// 		default:
+
+	// 		}
+	// 	}
+	// }
+
+	if errMessages := errors.Validate(c.Param("id"), "id"); len(errMessages) > 0 {
+		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
+			Message: "Bad request.",
+			Fields:  errMessages,
+		})
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("id"))
 	complaint, err := ch.complaintUseCase.FindByAvatarId(id)
 	if err != nil {

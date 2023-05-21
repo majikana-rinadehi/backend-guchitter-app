@@ -1,15 +1,19 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
-
 	"strconv"
 
 	"github.com/backend-guchitter-app/domain/model"
 	"github.com/backend-guchitter-app/logging"
 	"github.com/backend-guchitter-app/usecase"
+	"github.com/backend-guchitter-app/util/errors"
+	"github.com/backend-guchitter-app/util/utils"
 	"github.com/bloom42/rz-go"
 	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 type AvatarHandler interface {
@@ -60,7 +64,24 @@ func (ch avatarHandler) Index(c *gin.Context) {
 // @Failure 500
 // @Router /avatars/{id} [get]
 func (ch avatarHandler) Search(c *gin.Context) {
+
+	vErr := validation.Validate(c.Param("id"),
+		validation.By(errors.ValidateNotEmpty("id")),
+		is.Int.Error(errors.InvalidTypeErrMsg("id", "number")),
+	)
+
+	if vErr != nil {
+		c.IndentedJSON(http.StatusBadRequest, errors.ErrorStruct{
+			Message: "Bad request.",
+			Fields: []string{
+				vErr.Error(),
+			},
+		})
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("id"))
+
 	avatar, err := ch.avatarUseCase.FindByAvatarId(id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
@@ -83,14 +104,46 @@ func (ch avatarHandler) Search(c *gin.Context) {
 // @Failure 500
 // @Router /avatars [post]
 func (ch avatarHandler) Create(c *gin.Context) {
-	var newAvatar *model.Avatar
+	var newAvatar model.Avatar
 
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
 	if err := c.BindJSON(&newAvatar); err != nil {
 		return
 	}
-	result, err := ch.avatarUseCase.Create(*newAvatar)
+
+	vErr := validation.ValidateStruct(&newAvatar,
+		validation.Field(&newAvatar.AvatarId,
+			validation.By(errors.ValidateNotEmpty("avatarId")),
+			// is.Int.Error(errors.InvalidTypeErrMsg("avatarId", "number")),
+		),
+		validation.Field(&newAvatar.AvatarName,
+			validation.By(errors.ValidateNotEmpty("avatarName")),
+		),
+		validation.Field(&newAvatar.AvatarText,
+			validation.By(errors.ValidateNotEmpty("avatarText")),
+		),
+		validation.Field(&newAvatar.Color,
+			validation.By(errors.ValidateNotEmpty("color")),
+		),
+		validation.Field(&newAvatar.ImageUrl,
+			validation.By(errors.ValidateNotEmpty("imageUrl")),
+		),
+	)
+
+	if vErr != nil {
+		validationErr := vErr.(validation.Errors)
+		errorMessages := make([]string, 0)
+		for _, e := range validationErr {
+			errorMessages = append(errorMessages, e.Error())
+		}
+		fmt.Println(validationErr)
+		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
+			Message: "Bad request.",
+			Fields:  utils.SortStrings(errorMessages),
+		})
+		return
+	}
+
+	result, err := ch.avatarUseCase.Create(newAvatar)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		return
@@ -111,6 +164,30 @@ func (ch avatarHandler) Create(c *gin.Context) {
 func (ch avatarHandler) FindBetweenTimestamp(c *gin.Context) {
 	from := c.Query("from")
 	to := c.Query("to")
+
+	s := struct {
+		from string
+		to   string
+	}{from, to}
+	vErr := validation.ValidateStruct(&s,
+		validation.Field(&s.from, validation.By(errors.ValidateYYYY_MM_DD("from"))),
+		validation.Field(&s.to, validation.By(errors.ValidateYYYY_MM_DD("to"))),
+	)
+
+	if vErr != nil {
+		validationErr := vErr.(validation.Errors)
+		errorMessages := make([]string, 0)
+		for _, e := range validationErr {
+			errorMessages = append(errorMessages, e.Error())
+		}
+		fmt.Println(validationErr)
+		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
+			Message: "Bad request.",
+			Fields:  utils.SortStrings(errorMessages),
+		})
+		return
+	}
+
 	avatarList, err := ch.avatarUseCase.FindBetweenTimestamp(from, to)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})

@@ -7,6 +7,7 @@ import (
 	"github.com/backend-guchitter-app/usecase"
 	"github.com/backend-guchitter-app/util/errors"
 	tu "github.com/backend-guchitter-app/util/testUtils"
+	"github.com/backend-guchitter-app/util/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -186,6 +187,36 @@ func Test_avatarHandler_Search(t *testing.T) {
 			wantBody:   nil,
 			wantErr:    tu.NotFoundJson,
 		},
+		{
+			name: "Test_avatarHandler_Search_400_empty",
+			arg:  "",
+			fields: fields{
+				avatarUseCase: mock,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'id' is required.",
+				},
+			},
+		},
+		{
+			name: "Test_avatarHandler_Search_400_not_number",
+			arg:  "あ",
+			fields: fields{
+				avatarUseCase: mock,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'id' must be a 'number'.",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -255,6 +286,30 @@ func Test_avatarHandler_Create(t *testing.T) {
 			wantStatus: 500,
 			wantBody:   nil,
 			wantErr:    tu.ErrorJson,
+		},
+		{
+			name: "Test_avatarHandler_Create_400_empty",
+			arg: &model.Avatar{
+				AvatarId:   1,
+				AvatarName: "",
+				AvatarText: "",
+				ImageUrl:   "",
+				Color:      "",
+			},
+			fields: fields{
+				avatarUseCase: mock,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: utils.SortStrings([]string{
+					"Param 'avatarText' is required.",
+					"Param 'color' is required.",
+					"Param 'imageUrl' is required.",
+					"Param 'avatarName' is required.",
+				}),
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -344,6 +399,65 @@ func Test_avatarHandler_FindBetweenTimestamp(t *testing.T) {
 			wantStatus: 500,
 			wantBody:   fakeAvatarList,
 			wantErr:    tu.ErrorJson,
+		},
+		{
+			name: "Test_avatarHandler_FindBetweenTimestamp_400_not_date_1",
+			args: args{
+				from: "2022-01-011",
+				to:   "2022-01-011",
+			},
+			fields: fields{
+				avatarUseCase: mockErr,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: utils.SortStrings(
+					[]string{
+						"Param 'from' must be a 'YYYY-MM-DD'.",
+						"Param 'to' must be a 'YYYY-MM-DD'.",
+					},
+				),
+			},
+		},
+		{
+			name: "Test_avatarHandler_FindBetweenTimestamp_400_not_date_2",
+			args: args{
+				from: "2022-01-32",
+				to:   "2022-01-32",
+			},
+			fields: fields{
+				avatarUseCase: mockErr,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					"Param 'from' must be a 'YYYY-MM-DD'.",
+					"Param 'to' must be a 'YYYY-MM-DD'.",
+				},
+			},
+		},
+		{
+			name: "Test_avatarHandler_FindBetweenTimestamp_400_not_date_3_leap",
+			args: args{
+				from: "2024-02-29", //OK
+				to:   "2024-02-30", //NG
+			},
+			fields: fields{
+				avatarUseCase: mockErr,
+			},
+			wantStatus: 400,
+			wantBody:   nil,
+			wantErr: &errors.ErrorStruct{
+				Message: "Bad request.",
+				Fields: []string{
+					// "Param 'from' must be a 'YYYY-MM-DD'.",
+					"Param 'to' must be a 'YYYY-MM-DD'.",
+				},
+			},
 		},
 	}
 	for _, tt := range tests {

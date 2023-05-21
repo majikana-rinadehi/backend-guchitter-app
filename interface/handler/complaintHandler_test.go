@@ -217,7 +217,7 @@ func Test_complaintHandler_Search(t *testing.T) {
 			wantErr: &errors.ErrorStruct{
 				Message: "Bad request.",
 				Fields: []string{
-					"Param 'id' must be a 'number'",
+					"Param 'id' must be a 'number'.",
 				},
 			},
 		},
@@ -438,15 +438,15 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 				to:   "2022-01-011",
 			},
 			fields: fields{
-				complaintUseCase: mockUsecaseErr,
+				complaintUseCase: mockUsecase,
 			},
 			wantStatus: 400,
 			wantBody:   nil,
 			wantErr: &errors.ErrorStruct{
 				Message: "Bad request.",
 				Fields: []string{
-					"Param 'from' must be a 'YYYY-MM-DD'",
-					"Param 'to' must be a 'YYYY-MM-DD'",
+					"Param 'from' must be a 'YYYY-MM-DD'.",
+					"Param 'to' must be a 'YYYY-MM-DD'.",
 				},
 			},
 		},
@@ -457,15 +457,15 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 				to:   "2022-01-32",
 			},
 			fields: fields{
-				complaintUseCase: mockUsecaseErr,
+				complaintUseCase: mockUsecase,
 			},
 			wantStatus: 400,
 			wantBody:   nil,
 			wantErr: &errors.ErrorStruct{
 				Message: "Bad request.",
 				Fields: []string{
-					"Param 'from' must be a 'YYYY-MM-DD'",
-					"Param 'to' must be a 'YYYY-MM-DD'",
+					"Param 'from' must be a 'YYYY-MM-DD'.",
+					"Param 'to' must be a 'YYYY-MM-DD'.",
 				},
 			},
 		},
@@ -476,15 +476,15 @@ func Test_complaintHandler_FindBetweenTimestamp(t *testing.T) {
 				to:   "2024-02-30", // NG
 			},
 			fields: fields{
-				complaintUseCase: mockUsecaseErr,
+				complaintUseCase: mockUsecase,
 			},
 			wantStatus: 400,
 			wantBody:   nil,
 			wantErr: &errors.ErrorStruct{
 				Message: "Bad request.",
 				Fields: []string{
-					// "Param 'from' must be a 'YYYY-MM-DD'",
-					"Param 'to' must be a 'YYYY-MM-DD'",
+					// "Param 'from' must be a 'YYYY-MM-DD'.",
+					"Param 'to' must be a 'YYYY-MM-DD'.",
 				},
 			},
 		},

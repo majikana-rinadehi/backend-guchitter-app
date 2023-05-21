@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"strconv"
@@ -77,14 +76,7 @@ func (ch complaintHandler) Search(c *gin.Context) {
 	)
 
 	if vErr != nil {
-		validationErr := vErr.(validation.ErrorObject)
-		fmt.Println(validationErr)
-		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
-			Message: "Bad request.",
-			Fields: []string{
-				validationErr.Error(),
-			},
-		})
+		BadRequest(c, vErr.(validation.ErrorObject))
 		return
 	}
 
@@ -130,16 +122,7 @@ func (ch complaintHandler) Create(c *gin.Context) {
 	)
 
 	if vErr != nil {
-		validationErr := vErr.(validation.Errors)
-		errorMessages := make([]string, 0)
-		for _, e := range validationErr {
-			errorMessages = append(errorMessages, e.Error())
-		}
-		fmt.Println(validationErr)
-		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
-			Message: "Bad request.",
-			Fields:  errorMessages,
-		})
+		BadRequests(c, vErr.(validation.Errors))
 		return
 	}
 
@@ -175,16 +158,7 @@ func (ch complaintHandler) FindBetweenTimestamp(c *gin.Context) {
 	)
 
 	if vErr != nil {
-		validationErr := vErr.(validation.Errors)
-		errorMessages := make([]string, 0)
-		for _, e := range validationErr {
-			errorMessages = append(errorMessages, e.Error())
-		}
-		fmt.Println(validationErr)
-		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
-			Message: "Bad request.",
-			Fields:  errorMessages,
-		})
+		BadRequests(c, vErr.(validation.Errors))
 		return
 	}
 

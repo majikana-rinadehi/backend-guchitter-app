@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,7 +8,6 @@ import (
 	"github.com/backend-guchitter-app/logging"
 	"github.com/backend-guchitter-app/usecase"
 	"github.com/backend-guchitter-app/util/errors"
-	"github.com/backend-guchitter-app/util/utils"
 	"github.com/bloom42/rz-go"
 	"github.com/gin-gonic/gin"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -71,12 +69,7 @@ func (ch avatarHandler) Search(c *gin.Context) {
 	)
 
 	if vErr != nil {
-		c.IndentedJSON(http.StatusBadRequest, errors.ErrorStruct{
-			Message: "Bad request.",
-			Fields: []string{
-				vErr.Error(),
-			},
-		})
+		BadRequest(c, vErr.(validation.ErrorObject))
 		return
 	}
 
@@ -130,16 +123,7 @@ func (ch avatarHandler) Create(c *gin.Context) {
 	)
 
 	if vErr != nil {
-		validationErr := vErr.(validation.Errors)
-		errorMessages := make([]string, 0)
-		for _, e := range validationErr {
-			errorMessages = append(errorMessages, e.Error())
-		}
-		fmt.Println(validationErr)
-		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
-			Message: "Bad request.",
-			Fields:  utils.SortStrings(errorMessages),
-		})
+		BadRequests(c, vErr.(validation.Errors))
 		return
 	}
 
@@ -175,16 +159,7 @@ func (ch avatarHandler) FindBetweenTimestamp(c *gin.Context) {
 	)
 
 	if vErr != nil {
-		validationErr := vErr.(validation.Errors)
-		errorMessages := make([]string, 0)
-		for _, e := range validationErr {
-			errorMessages = append(errorMessages, e.Error())
-		}
-		fmt.Println(validationErr)
-		c.JSON(http.StatusBadRequest, errors.ErrorStruct{
-			Message: "Bad request.",
-			Fields:  utils.SortStrings(errorMessages),
-		})
+		BadRequests(c, vErr.(validation.Errors))
 		return
 	}
 

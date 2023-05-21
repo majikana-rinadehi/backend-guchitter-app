@@ -7,6 +7,7 @@ import (
 	"github.com/backend-guchitter-app/usecase"
 	"github.com/backend-guchitter-app/util/errors"
 	tu "github.com/backend-guchitter-app/util/testUtils"
+	"github.com/backend-guchitter-app/util/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -333,9 +334,11 @@ func Test_complaintHandler_Create(t *testing.T) {
 			wantBody:   &fakeComplaint,
 			wantErr: &errors.ErrorStruct{
 				Message: "Bad request.",
-				Fields: []string{
-					"Param 'complaintText' is required.",
-				},
+				Fields: utils.SortStrings(
+					[]string{
+						"Param 'complaintText' is required.",
+					},
+				),
 			},
 		},
 	}
